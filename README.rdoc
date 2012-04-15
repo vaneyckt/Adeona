@@ -1,0 +1,30 @@
+== Introduction
+Adeona is a Ruby module that makes it easy to create child processes will die when their parent process is disabled. It works even if the parent process is disabled with SIGKILL. It also avoids busy waiting. The code itself has been extensively commented so as to make it easy for others to modify it as desired.
+
+== Getting Started
+Install the gem at the command prompt:
+
+    gem install adeona
+
+== Examples
+Adeona has only one method called spawn_child(). Its syntax is very familiar to that of fork(). In the example below we create a child process that prints 'Hello World!':
+
+    #myapp.rb
+    require 'adeona'
+
+    child_pid = Adeona.spawn_child do
+      puts 'Hello World!'
+    end
+
+Aside from a block, the spawn_child() method can also take an options hash that specifies a value for the :detach, :timeout, and :verbose symbols. These options are extensively commented in the source code. The code below shows how we can make the child process disable itself after 5 seconds:
+
+    #myapp.rb
+    require 'adeona'
+
+    child_pid = Adeona.spawn_child(:detach => false, :timeout => 5) do
+      while(true) do
+        puts 'child process is running'
+      end
+    end
+
+    Process.waitpid(child_pid)
