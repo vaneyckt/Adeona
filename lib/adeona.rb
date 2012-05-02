@@ -1,3 +1,5 @@
+require 'logger'
+
 module Adeona
   def Adeona::spawn_child(options = {}, &block)
     # handle default options
@@ -43,10 +45,11 @@ module Adeona
       # this exception handler will handle exceptions thrown by the user specified code in the block, as well as
       # exceptions thrown by the lifeline_thread that cause the child process to exit when the parent process is
       # no longer active.
-      rescue Exception => e
+      rescue => ex
         if(options[:verbose])
-          puts "Exception caught: #{e.message}"
-          puts e.backtrace
+          logger = Logger.new($stdout)
+          logger.warn(self.name.to_s) { "Exception caught: #{ex.message}" }
+          logger.warn(self.name.to_s) { ex.backtrace }
         end
       end
     end
